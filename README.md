@@ -1,6 +1,8 @@
 # MDK Controller Update
 Firmware-Update-Tool für den [MDK Controller](https://github.com/milindur/MdkController).
 
+![Screenshot des Update-Tools](https://raw.githubusercontent.com/milindur/MdkControllerUpdate/master/images/mdk-controller-update.png)
+
 ## Downloads
 
 * [Update-Tool](https://github.com/milindur/MdkControllerUpdate/releases/download/v1.1/MdkControllerUpdate.exe)
