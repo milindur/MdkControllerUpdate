@@ -1,6 +1,11 @@
 # MDK Controller Update
 Firmware-Update-Tool für den [MDK Controller](https://github.com/milindur/MdkController).
 
+## Downloads
+
+* [Update-Tool](https://github.com/milindur/MdkControllerUpdate/releases/download/v1.1/MdkControllerUpdate.exe)
+* [Treiber](https://github.com/milindur/MdkControllerUpdate/releases/download/v1.1/drivers.zip)
+
 ## Update der Firmware (Windows)
 
 1. Das Update erfolgt per USB, dazu muss der Controller mit dem rechten USB-Port des Controllers ("PROG") am PC angeschlossen werden. Eine weitere Spannungsversorgung per DC-Buchse ist dafür nicht notwendig.
