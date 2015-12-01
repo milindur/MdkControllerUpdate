@@ -24,6 +24,7 @@ namespace MdkControllerUpdate.ViewModel
     {
         private const string RepositoryOwner = "milindur";
         private const string RepositoryName = "MdkController";
+        private const string GitHubToken = "1ee8bba55fd719d69ba64751c7e88258cf5044cd";
 
         private readonly IDialogService _dialogService;
 
@@ -134,32 +135,41 @@ namespace MdkControllerUpdate.ViewModel
                 {
                     IsBusy = true;
 
-                    var gitHub = new GitHubClient(new ProductHeaderValue("MdkControllerUpdate"), new InMemoryCredentialStore(new Credentials("1ee8bba55fd719d69ba64751c7e88258cf5044cd")));
-                    var releases = await gitHub.Release.GetAll(RepositoryOwner, RepositoryName);
-
-                    var results = new List<Release>();
-                    foreach (var release in releases)
+                    try
                     {
-                        var assets = await gitHub.Release.GetAllAssets(RepositoryOwner, RepositoryName, release.Id);
+                        var gitHub = new GitHubClient(new ProductHeaderValue("MdkControllerUpdate"), new InMemoryCredentialStore(new Credentials(GitHubToken)));
+                        var releases = await gitHub.Release.GetAll(RepositoryOwner, RepositoryName);
 
-                        var firmwareAsset = assets.SingleOrDefault(ra => ra.Name.ToLowerInvariant().EndsWith(".bin"));
-                        //if (firmwareAsset == null) continue;
-
-                        results.Add(new Release
+                        var results = new List<Release>();
+                        foreach (var release in releases)
                         {
-                            Label = release.Name,
-                            Description = release.Body,
-                            CreatedOn = release.CreatedAt,
-                            FirmwareUri = firmwareAsset?.BrowserDownloadUrl
-                        });
+                            var assets = await gitHub.Release.GetAllAssets(RepositoryOwner, RepositoryName, release.Id);
+
+                            var firmwareAsset = assets.SingleOrDefault(ra => ra.Name.ToLowerInvariant().EndsWith(".bin"));
+                            //if (firmwareAsset == null) continue;
+
+                            results.Add(new Release
+                            {
+                                Label = release.Name,
+                                Description = release.Body,
+                                CreatedOn = release.CreatedAt,
+                                FirmwareUri = firmwareAsset?.BrowserDownloadUrl
+                            });
+                        }
+
+                        Releases.Clear();
+                        results.ForEach(Releases.Add);
+
+                        SelectedRelease = Releases.FirstOrDefault();
                     }
-
-                    Releases.Clear();
-                    results.ForEach(Releases.Add);
-
-                    SelectedRelease = Releases.FirstOrDefault();
-
-                    IsBusy = false;
+                    catch (Exception ex)
+                    {
+                        await _dialogService.ShowMessage($"Error while receiving available releases.\r\nPlease make sure that you are connected to the Internet.\r\n\r\n{ex.Message}", "Releases");
+                    }
+                    finally
+                    {
+                        IsBusy = false;
+                    }
                 }, () => !IsBusy));
             }
         }
