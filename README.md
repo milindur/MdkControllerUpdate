@@ -5,8 +5,8 @@ Firmware-Update-Tool für den [MDK Controller](https://github.com/milindur/MdkCo
 
 ## Downloads
 
-* [Update-Tool](https://github.com/milindur/MdkControllerUpdate/releases/download/v1.1/MdkControllerUpdate.exe)
-* [Treiber](https://github.com/milindur/MdkControllerUpdate/releases/download/v1.1/drivers.zip)
+* [Update-Tool](https://github.com/milindur/MdkControllerUpdate/releases/download/v1.2/MdkControllerUpdate.exe)
+* [Treiber](https://github.com/milindur/MdkControllerUpdate/releases/download/v1.2/drivers.zip)
 
 ## Update der Firmware (Windows)
 
