@@ -161,6 +161,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Extensions\ProcessExtensions.cs" />
+    <Compile Include="Messages\FileOpenDialogMessage.cs" />
     <Compile Include="Model\Release.cs" />
     <Compile Include="Model\PortName.cs" />
     <Compile Include="Service\DialogService.cs" />

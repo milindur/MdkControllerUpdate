@@ -8,11 +8,13 @@ using System.Linq;
 using System.Management;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using MarkdownDeep;
 using MdkControllerUpdate.Extensions;
+using MdkControllerUpdate.Messages;
 using MdkControllerUpdate.Model;
 using Octokit;
 using Octokit.Internal;
@@ -45,6 +47,7 @@ namespace MdkControllerUpdate.ViewModel
                 RefreshPortsCommand.RaiseCanExecuteChanged();
                 RefreshReleasesCommand.RaiseCanExecuteChanged();
                 UpdateCommand.RaiseCanExecuteChanged();
+                UpdateFromFileCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -66,6 +69,7 @@ namespace MdkControllerUpdate.ViewModel
                 RaisePropertyChanged(() => SelectedComPort);
 
                 UpdateCommand.RaiseCanExecuteChanged();
+                UpdateFromFileCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -82,6 +86,7 @@ namespace MdkControllerUpdate.ViewModel
                 RaisePropertyChanged(() => SelectedReleaseDescriptionAsHtml);
 
                 UpdateCommand.RaiseCanExecuteChanged();
+                UpdateFromFileCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -185,7 +190,48 @@ namespace MdkControllerUpdate.ViewModel
 
                     var firmwareFilePath = Path.GetTempFileName();
                     await new WebClient().DownloadFileTaskAsync(SelectedRelease.FirmwareUri, firmwareFilePath);
+                    await UpdateFirmware(firmwareFilePath);
+                }, () => SelectedComPort != null && SelectedRelease?.FirmwareUri != null && !IsBusy));
+            }
+        }
 
+        private RelayCommand _updateFromFileCommand;
+        public RelayCommand UpdateFromFileCommand
+        {
+            get
+            {
+                return _updateFromFileCommand ?? (_updateFromFileCommand = new RelayCommand(async () =>
+                {
+                    IsBusy = true;
+
+                    var fileSelected = new TaskCompletionSource<string>();
+                    var fileSelectedTask = fileSelected.Task;
+
+                    MessengerInstance.Send(new FileOpenDialogMessage(fileName =>
+                    {
+                        fileSelected.SetResult(fileName);
+                    }, () =>
+                    {
+                        fileSelected.SetCanceled();
+                    }));
+
+                    try
+                    {
+                        var firmwareFilePath = await fileSelectedTask;
+                        await UpdateFirmware(firmwareFilePath);
+                    }
+                    catch (AggregateException ae)
+                    {
+                        if (ae.GetBaseException() is TaskCanceledException) return;
+
+                        await _dialogService.ShowMessage("Firmware could not be updated.", "Update");
+                    }
+                }, () => SelectedComPort != null && !IsBusy));
+            }
+        }
+
+        private async Task UpdateFirmware(string firmwareFilePath)
+        {
                     using (var sp = new SerialPort(SelectedComPort.ComPort, 1200, Parity.None, 8, StopBits.One))
                     {
                         sp.Open();
@@ -200,7 +246,7 @@ namespace MdkControllerUpdate.ViewModel
                     {
                         StartInfo = new ProcessStartInfo(
                             bossaFilePath,
-                            $"--port={SelectedComPort.ComPort} -U false -e -w -v -b \"{firmwareFilePath}\" -R")                        
+                            $"--port={SelectedComPort.ComPort} -U false -e -w -v -b \"{firmwareFilePath}\" -R")
                     };
 
                     flashProcess.Start();
@@ -217,8 +263,6 @@ namespace MdkControllerUpdate.ViewModel
                     }
 
                     IsBusy = false;
-                }, () => SelectedComPort != null && SelectedRelease?.FirmwareUri != null && !IsBusy));
-            }
         }
     }
 }

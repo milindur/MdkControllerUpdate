@@ -86,14 +86,24 @@
                               Margin="0" />
             </Border>
 
-            <Button Grid.Column="2"
-                    Grid.Row="2"
-                    Content="Update"
-                    Command="{Binding UpdateCommand}"
-                    VerticalAlignment="Bottom"
-                    Margin="4"
-                    Width="60"
-                    Height="26" />
+            <StackPanel Grid.Column="2"
+                        Grid.Row="2"
+                        Orientation="Vertical"
+                        VerticalAlignment="Bottom"
+                        Margin="4">
+                <Button Command="{Binding UpdateFromFileCommand}"
+                        VerticalAlignment="Bottom"
+                        Width="60"
+                        Height="52"
+                        Margin="0,0,0,4">
+                    <TextBlock>Update<LineBreak />from File</TextBlock>
+                </Button>
+                <Button Content="Update"
+                        Command="{Binding UpdateCommand}"
+                        VerticalAlignment="Bottom"
+                        Width="60"
+                        Height="26" />
+            </StackPanel>
         </Grid>
     </xctk:BusyIndicator>
 </Window>
