@@ -6,7 +6,7 @@ using MessageBox = Xceed.Wpf.Toolkit.MessageBox;
 
 namespace MdkControllerUpdate.Service
 {
-    public class DialogService : IDialogService
+    class DialogService : IDialogService
     {
         public Task ShowError(string message, string title, string buttonText, Action afterHideCallback)
         {

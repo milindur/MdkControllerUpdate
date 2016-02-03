@@ -20,7 +20,7 @@ using Release = MdkControllerUpdate.Model.Release;
 
 namespace MdkControllerUpdate.ViewModel
 {
-    public class MainViewModel : ViewModelBase
+    class MainViewModel : ViewModelBase
     {
         private const string RepositoryOwner = "milindur";
         private const string RepositoryName = "MdkController";

@@ -2,7 +2,7 @@
 
 namespace MdkControllerUpdate.Model
 {
-    public class Release
+    class Release
     {
         public string Label { get; set; }
         public string Description { get; set; }

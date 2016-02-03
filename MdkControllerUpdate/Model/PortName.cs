@@ -1,6 +1,6 @@
 ﻿namespace MdkControllerUpdate.Model
 {
-    public class PortName
+    class PortName
     {
         public string ComPort { get; set; }
         public string Name { get; set; }
